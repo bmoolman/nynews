@@ -77,9 +77,13 @@ namespace MyNewTerminal
             Console.Clear();
             Console.WriteLine("Loading data from ycombinator");
 
-            var result = await Client.GetStringAsync("https://hacker-news.firebaseio.com/v0/topstories.json");
+            var response = await Client.GetAsync("https://hacker-news.firebaseio.com/v0/topstories.json");
+            response.EnsureSuccessStatusCode();
 
-            _itemList = JsonConvert.DeserializeObject<List<int>>(result);
+            string content = await response.Content.ReadAsStringAsync();
+            //var result = await Client.GetStringAsync("https://hacker-news.firebaseio.com/v0/topstories.json");
+
+            _itemList = JsonConvert.DeserializeObject<List<int>>(content);
             _newsItems = new List<NewsItem>();
             for (int i = 1; i < 15; i++)
             {

@@ -18,7 +18,7 @@ namespace MyNewTerminal.Model
             switch (type)
             {
                 case NewsStoreTypes.HackerNews:                                     
-                    return new YCombinatorNewsFeed(reloadFeed).NewsItems;
+                    return new YCombinatorNewsFeed(reloadFeed,1,20).NewsItems;
                 default:
                     return null;
             }

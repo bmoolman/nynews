@@ -20,11 +20,22 @@ namespace MyNewTerminal.Model
         public string urlBase => new Uri(url).Host;
     }
 
+    public class DefaultNewsFeed : NewsFeedItem
+    {
+        public override void GetNewsFeed()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class YCombinatorNewsFeed : NewsFeedItem
     {
         private static HttpClient Client;
-        private static List<int> _itemList;
-        private static List<NewsItem> _newsItems;
+        private List<int> _itemList;
+        private List<NewsItem> _newsItems;
+        private int _startIndex;
+        private int _endIndex;
+        private int _incrementIndexBy = 10;
         public List<INewsFeedItem> NewsItems
         {
             get
@@ -36,7 +47,7 @@ namespace MyNewTerminal.Model
                     {
                         item.url = "https://news.ycombinator.com/";
                     }
-                    newsFeedItems.Add(new YCombinatorNewsFeed(false)
+                    newsFeedItems.Add(new DefaultNewsFeed()
                     {
                         Author = item.by,
                         NoOfComments = item.descendants,
@@ -56,8 +67,11 @@ namespace MyNewTerminal.Model
 
       
 
-        public YCombinatorNewsFeed(bool reloadFeed)
+        public YCombinatorNewsFeed(bool reloadFeed, int startIndex, int endIndex)
         {
+            _startIndex = startIndex;
+            _endIndex = endIndex;
+
             if (Client==null)
             {
                 Client = new HttpClient();
@@ -68,7 +82,6 @@ namespace MyNewTerminal.Model
             {
                 GetNewsFeed();
             }
-
         }
 
         public override void GetNewsFeed()
@@ -82,7 +95,7 @@ namespace MyNewTerminal.Model
 
             _itemList = JsonConvert.DeserializeObject<List<int>>(content);
             _newsItems = new List<NewsItem>();
-            for (int i = 1; i < 21; i++)
+            for (int i = _startIndex-1; i < _endIndex; i++)
             {
                 var task_newsFeeItem = Client.GetStringAsync($"https://hacker-news.firebaseio.com/v0/item/{_itemList[i]}.json");
                 var newsFeedItem = task_newsFeeItem.Result;

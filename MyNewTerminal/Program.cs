@@ -13,6 +13,7 @@ namespace MyNewTerminal
         public static void Main(string[] args)
         {
             Console.WriteLine("Starting connections");
+            Console.WriteLine("Press R to read the newsfeed");
 
             string line;
             do
